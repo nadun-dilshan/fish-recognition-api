@@ -1,0 +1,42 @@
+{
+  "devario_malabaricus": {
+    "pH": {"min": 6.5, "max": 8.0, "optimal": [7.0, 7.5]},
+    "temperature_C": {"min": 20, "max": 28, "optimal": [22, 26]},
+    "dissolved_oxygen_mgL": {"min": 5.5, "optimal": 7.5},
+    "conductivity_uS_cm": {"min": 50, "max": 300},
+    "ammonia_mgL": {"max": 0.02},
+    "nitrite_mgL": {"max": 0.01}
+  },
+  "devario_memorialis": {
+    "pH": {"min": 6.8, "max": 7.6, "optimal": [7.0, 7.3]},
+    "temperature_C": {"min": 21, "max": 26, "optimal": [23, 25]},
+    "dissolved_oxygen_mgL": {"min": 6.5, "optimal": 8.0},
+    "conductivity_uS_cm": {"min": 30, "max": 150},
+    "ammonia_mgL": {"max": 0.01},
+    "nitrite_mgL": {"max": 0.005}
+  },
+  "devario_micronema": {
+    "pH": {"min": 6.2, "max": 7.4, "optimal": [6.7, 7.2]},
+    "temperature_C": {"min": 19, "max": 25, "optimal": [21, 24]},
+    "dissolved_oxygen_mgL": {"min": 7.0, "optimal": 8.5},
+    "conductivity_uS_cm": {"min": 20, "max": 100},
+    "ammonia_mgL": {"max": 0.005},
+    "nitrite_mgL": {"max": 0.002}
+  },
+  "devario_monticola": {
+    "pH": {"min": 6.4, "max": 7.8, "optimal": [6.9, 7.4]},
+    "temperature_C": {"min": 18, "max": 24, "optimal": [20, 23]},
+    "dissolved_oxygen_mgL": {"min": 6.0, "optimal": 7.8},
+    "conductivity_uS_cm": {"min": 40, "max": 200},
+    "ammonia_mgL": {"max": 0.015},
+    "nitrite_mgL": {"max": 0.008}
+  },
+  "devario_pathirana": {
+    "pH": {"min": 6.7, "max": 8.2, "optimal": [7.2, 7.8]},
+    "temperature_C": {"min": 22, "max": 30, "optimal": [25, 28]},
+    "dissolved_oxygen_mgL": {"min": 5.0, "optimal": 6.8},
+    "conductivity_uS_cm": {"min": 80, "max": 400},
+    "ammonia_mgL": {"max": 0.03},
+    "nitrite_mgL": {"max": 0.015}
+  }
+}

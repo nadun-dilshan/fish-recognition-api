@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fish API Tester</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-8 bg-gradient-to-br from-blue-50 to-green-50 min-h-screen">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+            🐟 Fish Recognition API Tester
+        </h1>
+        
+        <div id="health-status" class="mb-8 p-6 rounded-xl border-2 transition-all"></div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Image Upload -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border">
+                <h2 class="text-2xl font-semibold mb-4">📸 Upload Fish Image</h2>
+                <input type="file" id="imageInput" accept="image/*" class="w-full p-3 border rounded-lg mb-4">
+                <button onclick="predictImage()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
+                    Identify Species
+                </button>
+                <div id="prediction-result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden"></div>
+            </div>
+            
+            <!-- Survival Assessment -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border">
+                <h2 class="text-2xl font-semibold mb-4">⚠️ Survival Assessment</h2>
+                <select id="speciesSelect" class="w-full p-3 border rounded-lg mb-4">
+                    <option value="">Select species...</option>
+                </select>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <input type="number" id="phInput" placeholder="pH" step="0.1" class="p-3 border rounded-lg">
+                    <input type="number" id="tempInput" placeholder="Temp °C" step="0.1" class="p-3 border rounded-lg">
+                    <input type="number" id="doInput" placeholder="DO mg/L" step="0.1" class="p-3 border rounded-lg">
+                </div>
+                <button onclick="assessSurvival()" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700">
+                    Calculate Survival %
+                </button>
+                <div id="survival-result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load health
+        fetch('/health').then(r => r.json()).then(data => {
+            document.getElementById('health-status').innerHTML = `
+                <div class="p-4 rounded-lg ${data.model_loaded ? 'bg-green-100 border-green-400' : 'bg-red-100 border-red-400'}">
+                    <h3 class="font-bold text-lg">API Status: ${data.status}</h3>
+                    <p>Model: ${data.model_loaded ? '✅ Loaded' : '❌ Missing'}</p>
+                    <p>Species: ${data.species_count || 0}</p>
+                </div>
+            `;
+        });
+
+        // Populate species
+        fetch('/species').then(r => r.json()).then(data => {
+            const select = document.getElementById('speciesSelect');
+            data.species.forEach(s => {
+                select.innerHTML += `<option value="${s}">${s.replace('_', ' ').toUpperCase()}</option>`;
+            });
+        });
+
+        function predictImage() {
+            const file = document.getElementById('imageInput').files[0];
+            if (!file) return alert('Select image');
+            
+            const form = new FormData();
+            form.append('file', file);
+            
+            fetch('/predict', {method: 'POST', body: form})
+                .then(r => r.json())
+                .then(showPrediction);
+        }
+
+        function assessSurvival() {
+            const species = document.getElementById('speciesSelect').value;
+            if (!species) return alert('Select species');
+            
+            const measurements = {
+                pH: parseFloat(document.getElementById('phInput').value) || 7.2,
+                temperature_C: parseFloat(document.getElementById('tempInput').value) || 25,
+                dissolved_oxygen_mgL: parseFloat(document.getElementById('doInput').value) || 7.0
+            };
+            
+            fetch('/assess/survival', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({species, measurements})
+            })
+                .then(r => r.json())
+                .then(showSurvival);
+        }
+
+        function showPrediction(data) {
+            const el = document.getElementById('prediction-result');
+            el.className = 'mt-4 p-4 bg-gray-50 rounded-lg';
+            if (data.status === 'success') {
+                el.innerHTML = `
+                    <div class="text-green-800">
+                        <h3 class="text-2xl font-bold">${data.predicted_species.replace('_', ' ')}</h3>
+                        <p>Confidence: ${(data.confidence * 100).toFixed(1)}%</p>
+                        <button onclick="nextStep('${data.predicted_species}')" 
+                                class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Next: Survival Assessment →
+                        </button>
+                    </div>
+                `;
+            } else {
+                el.innerHTML = `<p class="text-red-600">❌ ${data.message}</p>`;
+            }
+            el.classList.remove('hidden');
+        }
+
+        function showSurvival(data) {
+            const el = document.getElementById('survival-result');
+            const color = data.health_status === 'good' ? 'green' : data.health_status === 'warning' ? 'yellow' : 'red';
+            el.innerHTML = `
+                <div class="text-${color}-800">
+                    <h3 class="text-3xl font-bold">Survival: ${data.survival_probability_percent}%</h3>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mt-2">
+                        <div class="bg-${color}-500 h-4 rounded-full" style="width: ${data.survival_probability_percent}%"></div>
+                    </div>
+                    <p class="mt-2"><strong>Status:</strong> ${data.health_status.toUpperCase()}</p>
+                    ${data.critical_issues.map(issue => `<p class="text-sm mt-1">⚠️ ${issue}</p>`).join('')}
+                    <p class="mt-4 font-semibold">${data.recommendation}</p>
+                </div>
+            `;
+            el.classList.remove('hidden');
+        }
+
+        function nextStep(species) {
+            document.getElementById('speciesSelect').value = species;
+            document.getElementById('survival-result').scrollIntoView({behavior: 'smooth'});
+        }
+    </script>
+</body>
+</html>

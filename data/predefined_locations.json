@@ -1,0 +1,42 @@
+{
+  "Negombo": {
+    "pH": 7.4,
+    "temperature_C": 27.8,
+    "dissolved_oxygen_mgL": 5.9,
+    "conductivity_uS_cm": 350,
+    "location_type": "Coastal lagoon influence",
+    "notes": "Brackish water influence, higher temp"
+  },
+  "Kandy": {
+    "pH": 7.1,
+    "temperature_C": 24.5,
+    "dissolved_oxygen_mgL": 7.2,
+    "conductivity_uS_cm": 120,
+    "location_type": "Highland stream",
+    "notes": "Good oxygen, moderate flow (Nadun's nearby area!)"
+  },
+  "Knuckles": {
+    "pH": 6.9,
+    "temperature_C": 22.8,
+    "dissolved_oxygen_mgL": 8.1,
+    "conductivity_uS_cm": 65,
+    "location_type": "Mountain stream",
+    "notes": "Pristine, high oxygen - ideal for endemic species"
+  },
+  "Sinharaja": {
+    "pH": 6.7,
+    "temperature_C": 25.2,
+    "dissolved_oxygen_mgL": 7.5,
+    "conductivity_uS_cm": 45,
+    "location_type": "Rainforest stream",
+    "notes": "Very soft water, high biodiversity"
+  },
+  "Kelani": {
+    "pH": 7.3,
+    "temperature_C": 26.4,
+    "dissolved_oxygen_mgL": 6.3,
+    "conductivity_uS_cm": 180,
+    "location_type": "Major river",
+    "notes": "Some pollution in lower reaches"
+  }
+}

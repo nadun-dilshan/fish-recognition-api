@@ -1,0 +1,67 @@
+{
+  "devario_malabaricus": {
+    "common_name": "Malabar Danio",
+    "scientific_name": "Devario malabaricus",
+    "family": "Cyprinidae",
+    "max_size_cm": 8.0,
+    "habitat": "Clear, fast-flowing hill streams with rocky substrates",
+    "distribution": "Western Ghats (India), Sri Lanka (wet zone streams)",
+    "conservation_status": "Least Concern (IUCN Red List)",
+    "diet": "Insects, crustaceans, algae, detritus",
+    "behavior": "Schooling fish, peaceful, active swimmers",
+    "threats": ["Habitat degradation", "Pollution", "Invasive species"],
+    "general_info": "Popular in aquariums. Prefers well-oxygenated water with strong current simulation."
+  },
+  "devario_memorialis": {
+    "common_name": "Memorial Danio",
+    "scientific_name": "Devario memorialis",
+    "family": "Cyprinidae",
+    "max_size_cm": 7.5,
+    "habitat": "Shallow, clear streams with gravel beds",
+    "distribution": "Sri Lanka (Knuckles Mountain Range)",
+    "conservation_status": "Vulnerable (IUCN)",
+    "diet": "Small invertebrates, zooplankton",
+    "behavior": "Shoaling, mid-water swimmer",
+    "threats": ["Deforestation", "Water abstraction", "Gem mining pollution"],
+    "general_info": "Endemic to Sri Lanka. Very sensitive to water quality changes."
+  },
+  "devario_micronema": {
+    "common_name": "Micronema Danio",
+    "scientific_name": "Devario micronema",
+    "family": "Cyprinidae",
+    "max_size_cm": 6.0,
+    "habitat": "Fast-flowing riffles in forested streams",
+    "distribution": "Sri Lanka (central highlands)",
+    "conservation_status": "Endangered (IUCN)",
+    "diet": "Aquatic insects, larvae",
+    "behavior": "Active schooling, prefers current",
+    "threats": ["Agriculture runoff", "Sedimentation"],
+    "general_info": "Rare species requiring pristine water conditions."
+  },
+  "devario_monticola": {
+    "common_name": "Mountain Danio",
+    "scientific_name": "Devario monticola",
+    "family": "Cyprinidae",
+    "max_size_cm": 9.0,
+    "habitat": "Highland streams, rocky pools",
+    "distribution": "Sri Lanka (high elevation streams)",
+    "conservation_status": "Near Threatened",
+    "diet": "Insects, small fish",
+    "behavior": "Territorial in breeding season",
+    "threats": ["Climate change", "Tourism impact"],
+    "general_info": "Largest Devario in Sri Lanka. Hardy but needs cool water."
+  },
+  "devario_pathirana": {
+    "common_name": "Pathirana's Danio",
+    "scientific_name": "Devario pathirana",
+    "family": "Cyprinidae",
+    "max_size_cm": 7.0,
+    "habitat": "Lowland streams with dense vegetation",
+    "distribution": "Sri Lanka (wet zone lowlands)",
+    "conservation_status": "Data Deficient",
+    "diet": "Omnivorous - algae, insects, plant matter",
+    "behavior": "Peaceful shoaling fish",
+    "threats": ["Urbanization", "Eutrophication"],
+    "general_info": "Recently discovered species. Tolerates slightly warmer water."
+  }
+}
