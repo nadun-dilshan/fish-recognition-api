@@ -3,80 +3,196 @@
 <head>
     <title>Fish API Tester</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="p-8 bg-gradient-to-br from-blue-50 to-green-50 min-h-screen">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            🐟 Fish Recognition API Tester
-        </h1>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 py-6 sm:py-12">
+        <!-- Header -->
+        <div class="text-center mb-8 sm:mb-12">
+            <div class="text-4xl sm:text-5xl mb-3">🐟</div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+                Fish Recognition API
+            </h1>
+            <p class="text-gray-600 text-sm sm:text-base">Identify species and assess survival conditions</p>
+        </div>
         
-        <div id="health-status" class="mb-8 p-6 rounded-xl border-2 transition-all"></div>
+        <!-- Health Status -->
+        <div id="health-status" class="mb-6 sm:mb-8"></div>
         
-        <div class="grid md:grid-cols-2 gap-6">
-            <!-- Image Upload -->
-            <div class="bg-white p-6 rounded-xl shadow-lg border">
-                <h2 class="text-2xl font-semibold mb-4">📸 Upload Fish Image</h2>
-                <input type="file" id="imageInput" accept="image/*" class="w-full p-3 border rounded-lg mb-4">
-                <button onclick="predictImage()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
-                    Identify Species
-                </button>
-                <div id="prediction-result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden"></div>
+        <!-- Main Grid -->
+        <div class="grid lg:grid-cols-2 gap-6">
+            <!-- Image Upload Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6 sm:p-8">
+                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">Upload Fish Image</h2>
+                    
+                    <!-- Image Preview -->
+                    <div id="image-preview-container" class="mb-6 hidden">
+                        <div class="relative rounded-xl overflow-hidden bg-gray-100 aspect-video">
+                            <img id="image-preview" class="w-full h-full object-cover" alt="Preview">
+                            <button onclick="clearImage()" class="absolute top-3 right-3 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- File Input -->
+                    <label class="block mb-4">
+                        <div class="flex items-center justify-center w-full px-6 py-8 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition">
+                            <div class="text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <p class="text-sm text-gray-600 mb-1">
+                                    <span class="font-semibold text-blue-600">Click to upload</span> or drag and drop
+                                </p>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                            </div>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="previewImage()">
+                    </label>
+                    
+                    <button onclick="predictImage()" class="w-full bg-blue-600 text-white py-3.5 rounded-xl font-medium hover:bg-blue-700 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" id="predictBtn" disabled>
+                        Identify Species
+                    </button>
+                    
+                    <!-- Prediction Result -->
+                    <div id="prediction-result" class="mt-6 hidden"></div>
+                </div>
             </div>
             
-            <!-- Survival Assessment -->
-            <div class="bg-white p-6 rounded-xl shadow-lg border">
-                <h2 class="text-2xl font-semibold mb-4">⚠️ Survival Assessment</h2>
-                <select id="speciesSelect" class="w-full p-3 border rounded-lg mb-4">
-                    <option value="">Select species...</option>
-                </select>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <input type="number" id="phInput" placeholder="pH" step="0.1" class="p-3 border rounded-lg">
-                    <input type="number" id="tempInput" placeholder="Temp °C" step="0.1" class="p-3 border rounded-lg">
-                    <input type="number" id="doInput" placeholder="DO mg/L" step="0.1" class="p-3 border rounded-lg">
+            <!-- Survival Assessment Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200">
+                <div class="p-6 sm:p-8">
+                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 mb-6">Survival Assessment</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Species</label>
+                            <select id="speciesSelect" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                                <option value="">Select species...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">pH Level</label>
+                                <input type="number" id="phInput" placeholder="7.2" step="0.1" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Temp (°C)</label>
+                                <input type="number" id="tempInput" placeholder="25" step="0.1" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">DO (mg/L)</label>
+                                <input type="number" id="doInput" placeholder="7.0" step="0.1" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                            </div>
+                        </div>
+                        
+                        <button onclick="assessSurvival()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-medium hover:bg-green-700 transition shadow-sm mt-6">
+                            Calculate Survival Probability
+                        </button>
+                        
+                        <!-- Survival Result -->
+                        <div id="survival-result" class="mt-6 hidden"></div>
+                    </div>
                 </div>
-                <button onclick="assessSurvival()" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700">
-                    Calculate Survival %
-                </button>
-                <div id="survival-result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Load health
+        // Load health status
         fetch('/health').then(r => r.json()).then(data => {
-            document.getElementById('health-status').innerHTML = `
-                <div class="p-4 rounded-lg ${data.model_loaded ? 'bg-green-100 border-green-400' : 'bg-red-100 border-red-400'}">
-                    <h3 class="font-bold text-lg">API Status: ${data.status}</h3>
-                    <p>Model: ${data.model_loaded ? '✅ Loaded' : '❌ Missing'}</p>
-                    <p>Species: ${data.species_count || 0}</p>
+            const statusEl = document.getElementById('health-status');
+            const isHealthy = data.model_loaded;
+            statusEl.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full ${isHealthy ? 'bg-green-500' : 'bg-red-500'} animate-pulse"></div>
+                            <span class="font-semibold text-gray-900">API Status: ${data.status}</span>
+                        </div>
+                        <div class="flex gap-6 text-sm text-gray-600">
+                            <span>Model: ${data.model_loaded ? '✅' : '❌'}</span>
+                            <span>Species: ${data.species_count || 0}</span>
+                        </div>
+                    </div>
                 </div>
             `;
         });
 
-        // Populate species
+        // Populate species dropdown
         fetch('/species').then(r => r.json()).then(data => {
             const select = document.getElementById('speciesSelect');
             data.species.forEach(s => {
-                select.innerHTML += `<option value="${s}">${s.replace('_', ' ').toUpperCase()}</option>`;
+                const option = document.createElement('option');
+                option.value = s;
+                option.textContent = s.replace(/_/g, ' ').toUpperCase();
+                select.appendChild(option);
             });
         });
 
+        function previewImage() {
+            const file = document.getElementById('imageInput').files[0];
+            const preview = document.getElementById('image-preview');
+            const container = document.getElementById('image-preview-container');
+            const btn = document.getElementById('predictBtn');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    container.classList.remove('hidden');
+                    btn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearImage() {
+            document.getElementById('imageInput').value = '';
+            document.getElementById('image-preview-container').classList.add('hidden');
+            document.getElementById('predictBtn').disabled = true;
+            document.getElementById('prediction-result').classList.add('hidden');
+        }
+
         function predictImage() {
             const file = document.getElementById('imageInput').files[0];
-            if (!file) return alert('Select image');
+            if (!file) {
+                alert('Please select an image');
+                return;
+            }
             
             const form = new FormData();
             form.append('file', file);
             
+            const btn = document.getElementById('predictBtn');
+            btn.disabled = true;
+            btn.textContent = 'Analyzing...';
+            
             fetch('/predict', {method: 'POST', body: form})
                 .then(r => r.json())
-                .then(showPrediction);
+                .then(data => {
+                    showPrediction(data);
+                    btn.disabled = false;
+                    btn.textContent = 'Identify Species';
+                })
+                .catch(err => {
+                    alert('Error: ' + err.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Identify Species';
+                });
         }
 
         function assessSurvival() {
             const species = document.getElementById('speciesSelect').value;
-            if (!species) return alert('Select species');
+            if (!species) {
+                alert('Please select a species');
+                return;
+            }
             
             const measurements = {
                 pH: parseFloat(document.getElementById('phInput').value) || 7.2,
@@ -90,41 +206,97 @@
                 body: JSON.stringify({species, measurements})
             })
                 .then(r => r.json())
-                .then(showSurvival);
+                .then(showSurvival)
+                .catch(err => alert('Error: ' + err.message));
         }
 
         function showPrediction(data) {
             const el = document.getElementById('prediction-result');
-            el.className = 'mt-4 p-4 bg-gray-50 rounded-lg';
+            
             if (data.status === 'success') {
                 el.innerHTML = `
-                    <div class="text-green-800">
-                        <h3 class="text-2xl font-bold">${data.predicted_species.replace('_', ' ')}</h3>
-                        <p>Confidence: ${(data.confidence * 100).toFixed(1)}%</p>
+                    <div class="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-6 border border-blue-200">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <div class="text-xs font-semibold text-blue-600 mb-1">IDENTIFIED SPECIES</div>
+                                <h3 class="text-2xl font-bold text-gray-900">${data.predicted_species.replace(/_/g, ' ').toUpperCase()}</h3>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-600 mb-1">Confidence</div>
+                                <div class="text-2xl font-bold text-green-600">${(data.confidence * 100).toFixed(1)}%</div>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                            <div class="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500" style="width: ${data.confidence * 100}%"></div>
+                        </div>
                         <button onclick="nextStep('${data.predicted_species}')" 
-                                class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                            Next: Survival Assessment →
+                                class="w-full bg-blue-600 text-white px-4 py-3 rounded-xl font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                            Continue to Survival Assessment
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
                         </button>
                     </div>
                 `;
             } else {
-                el.innerHTML = `<p class="text-red-600">❌ ${data.message}</p>`;
+                el.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <p class="text-red-800 font-medium">❌ ${data.message}</p>
+                    </div>
+                `;
             }
             el.classList.remove('hidden');
         }
 
         function showSurvival(data) {
             const el = document.getElementById('survival-result');
-            const color = data.health_status === 'good' ? 'green' : data.health_status === 'warning' ? 'yellow' : 'red';
+            const survival = data.survival_probability_percent;
+            let statusColor, statusBg, statusBorder;
+            
+            if (data.health_status === 'good') {
+                statusColor = 'text-green-800';
+                statusBg = 'bg-green-50';
+                statusBorder = 'border-green-200';
+            } else if (data.health_status === 'warning') {
+                statusColor = 'text-yellow-800';
+                statusBg = 'bg-yellow-50';
+                statusBorder = 'border-yellow-200';
+            } else {
+                statusColor = 'text-red-800';
+                statusBg = 'bg-red-50';
+                statusBorder = 'border-red-200';
+            }
+            
             el.innerHTML = `
-                <div class="text-${color}-800">
-                    <h3 class="text-3xl font-bold">Survival: ${data.survival_probability_percent}%</h3>
-                    <div class="w-full bg-gray-200 rounded-full h-4 mt-2">
-                        <div class="bg-${color}-500 h-4 rounded-full" style="width: ${data.survival_probability_percent}%"></div>
+                <div class="${statusBg} ${statusBorder} border rounded-xl p-6">
+                    <div class="text-center mb-4">
+                        <div class="text-xs font-semibold ${statusColor} uppercase mb-2">${data.health_status}</div>
+                        <div class="text-5xl font-bold ${statusColor}">${survival}%</div>
+                        <div class="text-sm text-gray-600 mt-1">Survival Probability</div>
                     </div>
-                    <p class="mt-2"><strong>Status:</strong> ${data.health_status.toUpperCase()}</p>
-                    ${data.critical_issues.map(issue => `<p class="text-sm mt-1">⚠️ ${issue}</p>`).join('')}
-                    <p class="mt-4 font-semibold">${data.recommendation}</p>
+                    
+                    <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+                        <div class="h-3 rounded-full transition-all duration-500 ${
+                            data.health_status === 'good' ? 'bg-green-500' : 
+                            data.health_status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
+                        }" style="width: ${survival}%"></div>
+                    </div>
+                    
+                    ${data.critical_issues.length > 0 ? `
+                        <div class="space-y-2 mb-4">
+                            ${data.critical_issues.map(issue => `
+                                <div class="flex items-start gap-2 text-sm ${statusColor}">
+                                    <span class="mt-0.5">⚠️</span>
+                                    <span>${issue}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="bg-white rounded-lg p-4 border border-gray-200">
+                        <div class="text-xs font-semibold text-gray-600 uppercase mb-1">Recommendation</div>
+                        <p class="text-gray-900">${data.recommendation}</p>
+                    </div>
                 </div>
             `;
             el.classList.remove('hidden');
@@ -132,7 +304,7 @@
 
         function nextStep(species) {
             document.getElementById('speciesSelect').value = species;
-            document.getElementById('survival-result').scrollIntoView({behavior: 'smooth'});
+            document.getElementById('speciesSelect').scrollIntoView({behavior: 'smooth', block: 'center'});
         }
     </script>
 </body>
