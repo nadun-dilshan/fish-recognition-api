@@ -1,0 +1,203 @@
+{
+  "info": {
+    "_postman_id": "fish-recognition-api-collection",
+    "name": "Fish Recognition & Survival API",
+    "description": "Postman collection for testing the Fish Recognition API hosted on PythonAnywhere\nBase URL: https://nadun.pythonanywhere.com\n\nEndpoints:\n- Species prediction\n- Survival assessment (custom & location-based)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Check if API, model and data files are loaded correctly"
+      },
+      "response": []
+    },
+    {
+      "name": "2. List All Species",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/species",
+          "host": ["{{baseUrl}}"],
+          "path": ["species"]
+        },
+        "description": "Returns list of all supported fish species"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Get Species Info (Example: devario_pathirana)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/species/info/devario_pathirana",
+          "host": ["{{baseUrl}}"],
+          "path": ["species", "info", "devario_pathirana"]
+        },
+        "description": "Get detailed information about a specific species"
+      },
+      "response": []
+    },
+    {
+      "name": "4. List Predefined Locations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/locations",
+          "host": ["{{baseUrl}}"],
+          "path": ["locations"]
+        },
+        "description": "List all predefined Sri Lankan locations with average water parameters"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Predict Species - Image File Upload",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/predict",
+          "host": ["{{baseUrl}}"],
+          "path": ["predict"]
+        },
+        "description": "Upload an image of a fish to identify the species"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Predict Species - Base64 Image",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"image\": \"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQE... (paste your base64 here)\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/predict/base64",
+          "host": ["{{baseUrl}}"],
+          "path": ["predict", "base64"]
+        },
+        "description": "Send image as base64 string (with or without data URI prefix)"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Predict Species - From URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://example.com/fish-photo.jpg\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/predict/url",
+          "host": ["{{baseUrl}}"],
+          "path": ["predict", "url"]
+        },
+        "description": "Send public image URL for species prediction"
+      },
+      "response": []
+    },
+    {
+      "name": "8. Survival Assessment - Custom Measurements",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"species\": \"devario_pathirana\",\n  \"measurements\": {\n    \"pH\": 7.4,\n    \"temperature_C\": 27.5,\n    \"dissolved_oxygen_mgL\": 6.2\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/assess/survival",
+          "host": ["{{baseUrl}}"],
+          "path": ["assess", "survival"]
+        },
+        "description": "Calculate survival probability using custom water parameters"
+      },
+      "response": []
+    },
+    {
+      "name": "9. Survival Assessment - Using Location (Negombo)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"species\": \"devario_pathirana\",\n  \"location\": \"Negombo\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/assess/survival/location",
+          "host": ["{{baseUrl}}"],
+          "path": ["assess", "survival", "location"]
+        },
+        "description": "Calculate survival probability using average parameters of a predefined location (e.g. Negombo)"
+      },
+      "response": []
+    },
+    {
+      "name": "10. Test HTML Page (if you deployed it)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/static/health.html",
+          "host": ["{{baseUrl}}"],
+          "path": ["static", "health.html"]
+        },
+        "description": "Simple browser-based test page (if you kept static/health.html)"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://spnmh8l2-5002.asse.devtunnels.ms",
+      "type": "string"
+    }
+  ]
+}
