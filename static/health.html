@@ -1,9 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Fish API Tester</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        img {
+            max-height: 320px;
+            object-fit: contain;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+        @media (max-width: 640px) {
+            img {
+                max-height: 240px;
+            }
+        }
+        /* Improved Grad-CAM grid layout for desktop */
+        .gradcam-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 1024px) {
+            .gradcam-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+        .gradcam-image {
+            max-height: 400px;
+            width: 100%;
+            object-fit: contain;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="max-w-6xl mx-auto px-4 py-6 sm:py-12">
@@ -105,35 +136,39 @@
 
     <script>
         // Load health status
-        fetch('/health').then(r => r.json()).then(data => {
-            const statusEl = document.getElementById('health-status');
-            const isHealthy = data.model_loaded;
-            statusEl.innerHTML = `
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between flex-wrap gap-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full ${isHealthy ? 'bg-green-500' : 'bg-red-500'} animate-pulse"></div>
-                            <span class="font-semibold text-gray-900">API Status: ${data.status}</span>
-                        </div>
-                        <div class="flex gap-6 text-sm text-gray-600">
-                            <span>Model: ${data.model_loaded ? '✅' : '❌'}</span>
-                            <span>Species: ${data.species_count || 0}</span>
+        fetch('/health')
+            .then(r => r.json())
+            .then(data => {
+                const statusEl = document.getElementById('health-status');
+                const isHealthy = data.model_loaded;
+                statusEl.innerHTML = `
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 rounded-full ${isHealthy ? 'bg-green-500' : 'bg-red-500'} animate-pulse"></div>
+                                <span class="font-semibold text-gray-900">API Status: ${data.status}</span>
+                            </div>
+                            <div class="flex gap-6 text-sm text-gray-600">
+                                <span>Model: ${data.model_loaded ? '✅' : '❌'}</span>
+                                <span>Species: ${data.species_count || 0}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
-        });
+                `;
+            });
 
         // Populate species dropdown
-        fetch('/species').then(r => r.json()).then(data => {
-            const select = document.getElementById('speciesSelect');
-            data.species.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s;
-                option.textContent = s.replace(/_/g, ' ').toUpperCase();
-                select.appendChild(option);
+        fetch('/species')
+            .then(r => r.json())
+            .then(data => {
+                const select = document.getElementById('speciesSelect');
+                data.species.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s.replace(/_/g, ' ').toUpperCase();
+                    select.appendChild(option);
+                });
             });
-        });
 
         function previewImage() {
             const file = document.getElementById('imageInput').files[0];
@@ -173,7 +208,8 @@
             btn.disabled = true;
             btn.textContent = 'Analyzing...';
             
-            fetch('/predict', {method: 'POST', body: form})
+            // IMPORTANT: Add ?gradcam=true here
+            fetch('/predict?gradcam=true', { method: 'POST', body: form })
                 .then(r => r.json())
                 .then(data => {
                     showPrediction(data);
@@ -203,7 +239,7 @@
             fetch('/assess/survival', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({species, measurements})
+                body: JSON.stringify({ species, measurements })
             })
                 .then(r => r.json())
                 .then(showSurvival)
@@ -212,10 +248,13 @@
 
         function showPrediction(data) {
             const el = document.getElementById('prediction-result');
-            
+            el.innerHTML = ''; // clear previous content
+
+            let predictionHTML = '';
+
             if (data.status === 'success') {
-                el.innerHTML = `
-                    <div class="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-6 border border-blue-200">
+                predictionHTML = `
+                    <div class="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-6 border border-blue-200 mb-6">
                         <div class="flex items-start justify-between mb-4">
                             <div>
                                 <div class="text-xs font-semibold text-blue-600 mb-1">IDENTIFIED SPECIES</div>
@@ -239,12 +278,68 @@
                     </div>
                 `;
             } else {
-                el.innerHTML = `
+                predictionHTML = `
                     <div class="bg-red-50 border border-red-200 rounded-xl p-4">
-                        <p class="text-red-800 font-medium">❌ ${data.message}</p>
+                        <p class="text-red-800 font-medium">❌ ${data.message || 'Unknown error'}</p>
                     </div>
                 `;
             }
+
+            // Grad-CAM Visualization - IMPROVED LAYOUT
+            let gradcamHTML = '';
+
+            if (data.gradcam && Object.keys(data.gradcam).length > 0) {
+                const g = data.gradcam;
+
+                const images = [
+                    { key: 'original', label: 'Original Image', desc: 'The raw uploaded image used for prediction.' },
+                    { key: 'heatmap',  label: 'Grad-CAM Heatmap', desc: 'Highlights regions most influential in the classification.' },
+                    { key: 'outline',  label: 'Feature Outline', desc: 'Extracted important contours/features identified by the model.' },
+                    { key: 'combined', label: 'Heatmap with Outline', desc: 'Overlay of heatmap and outline showing precise important areas.' }
+                ];
+
+                gradcamHTML = `
+                    <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-6 sm:p-8">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 text-center">Grad-CAM Visualization</h3>
+                            <p class="text-sm text-gray-600 text-center mb-8">Understanding how the AI identifies fish species</p>
+                            
+                            <div class="gradcam-grid">
+                                ${images.map(img => `
+                                    ${g[img.key] ? `
+                                        <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                                            <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
+                                                <h4 class="font-semibold text-gray-900 text-center">${img.label}</h4>
+                                            </div>
+                                            <div class="flex items-center justify-center bg-white p-4">
+                                                <img src="data:image/png;base64,${g[img.key]}" 
+                                                     alt="${img.label}" 
+                                                     class="gradcam-image rounded-lg">
+                                            </div>
+                                            <div class="p-4 bg-gray-50 border-t border-gray-200">
+                                                <p class="text-xs text-gray-600 text-center leading-relaxed">${img.desc}</p>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                `).join('')}
+                            </div>
+                            
+                            ${data.gradcam.gradcam_layer ? `
+                                <div class="mt-8 text-center">
+                                    <div class="inline-flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-200">
+                                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="text-sm text-gray-700">Computed using layer: <strong class="text-blue-700">${data.gradcam.gradcam_layer}</strong></span>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            el.innerHTML = predictionHTML + gradcamHTML;
             el.classList.remove('hidden');
         }
 
@@ -270,7 +365,7 @@
             el.innerHTML = `
                 <div class="${statusBg} ${statusBorder} border rounded-xl p-6">
                     <div class="text-center mb-4">
-                        <div class="text-xs font-semibold ${statusColor} uppercase mb-2">${data.health_status}</div>
+                        <div class="text-xs font-semibold ${statusColor} uppercase mb-2">${data.health_status.toUpperCase()}</div>
                         <div class="text-5xl font-bold ${statusColor}">${survival}%</div>
                         <div class="text-sm text-gray-600 mt-1">Survival Probability</div>
                     </div>
@@ -282,7 +377,7 @@
                         }" style="width: ${survival}%"></div>
                     </div>
                     
-                    ${data.critical_issues.length > 0 ? `
+                    ${data.critical_issues?.length > 0 ? `
                         <div class="space-y-2 mb-4">
                             ${data.critical_issues.map(issue => `
                                 <div class="flex items-start gap-2 text-sm ${statusColor}">
@@ -304,7 +399,7 @@
 
         function nextStep(species) {
             document.getElementById('speciesSelect').value = species;
-            document.getElementById('speciesSelect').scrollIntoView({behavior: 'smooth', block: 'center'});
+            document.getElementById('speciesSelect').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     </script>
 </body>
