@@ -192,64 +192,77 @@ def get_gradcam_heatmap(img_array, model, class_idx, last_conv_layer_name):
     return heatmap.numpy()
 
 
-def heatmap_to_colored_image(heatmap, original_img, alpha=0.4, colormap=cv2.COLORMAP_JET):
-    """heatmap (H,W) float → colored overlay on original_img (H',W',3)"""
-    orig_np = np.array(original_img)                # (H, W, 3) uint8
-    h_orig, w_orig = orig_np.shape[:2]
+def heatmap_to_colored_image(heatmap, original_img, alpha=0.55, colormap=cv2.COLORMAP_TURBO):
+    orig_np = np.array(original_img)
+    h, w = orig_np.shape[:2]
 
-    # Resize heatmap to **exactly** match original (height, width)
-    heatmap_resized = cv2.resize(heatmap, (w_orig, h_orig), interpolation=cv2.INTER_CUBIC)
+    heatmap_resized = cv2.resize(heatmap, (w, h), cv2.INTER_CUBIC)
+    heatmap_norm = np.clip(heatmap_resized / np.max(heatmap_resized + 1e-8), 0, 1)
 
-    # Normalize to 0-255 uint8
-    if heatmap_resized.max() > 0:
-        heatmap_resized = (255 * (heatmap_resized / heatmap_resized.max())).astype(np.uint8)
-    else:
-        heatmap_resized = np.zeros_like(heatmap_resized, dtype=np.uint8)
+    # ── Stronger foreground mask ───────────────────────────────────────
+    lab = cv2.cvtColor(orig_np, cv2.COLOR_RGB2LAB)
+    a_channel = lab[:,:,1].astype(np.float32)   # red-green
+    b_channel = lab[:,:,2].astype(np.float32)   # yellow-blue
 
-    # Apply JET colormap → BGR
-    heatmap_colored_bgr = cv2.applyColorMap(heatmap_resized, colormap)
-    # Convert to RGB to match original_img
-    heatmap_colored = cv2.cvtColor(heatmap_colored_bgr, cv2.COLOR_BGR2RGB)
+    # Many tropical fish have strong a/b channel contrast
+    color_contrast = np.sqrt(a_channel**2 + b_channel**2)
+    color_contrast = cv2.GaussianBlur(color_contrast, (0,0), 4)
+    color_contrast = (color_contrast - color_contrast.min()) / (color_contrast.max() - color_contrast.min() + 1e-6)
 
-    # Debug prints (remove later)
-    print(f"Original shape: {orig_np.shape}, Heatmap colored shape: {heatmap_colored.shape}")
+    luminosity = lab[:,:,0].astype(np.float32) / 255.0
+    mask = 0.65 * color_contrast + 0.35 * luminosity
+    mask = cv2.GaussianBlur(mask, (21, 21), 0)
+    mask = np.clip(mask * 1.6, 0, 1)           # aggressive boost
 
-    # Blend — now shapes MUST match
-    overlaid = cv2.addWeighted(orig_np, 1 - alpha, heatmap_colored, alpha, 0)
+    # Final sharpening of transition
+    mask = np.power(mask, 1.35)
 
-    return Image.fromarray(overlaid)
+    # ── Compose ─────────────────────────────────────────────────────────
+    colored = (255 * heatmap_norm[..., np.newaxis] * mask[..., np.newaxis]).astype(np.uint8)
+    colored_mapped = cv2.applyColorMap(colored, colormap)
+    colored_mapped = cv2.cvtColor(colored_mapped, cv2.COLOR_BGR2RGB)
 
+    # Where mask is low → original image, where high → colored heatmap
+    output = orig_np * (1 - mask[..., np.newaxis]) + colored_mapped * mask[..., np.newaxis]
+    output = np.clip(output, 0, 255).astype(np.uint8)
+
+    return Image.fromarray(output)
 
 def generate_gradcam_variants(image: Image.Image, img_array, model, top_class_idx):
-    """Return dictionary with original + 3 gradcam variants as base64"""
+    """Return original + improved heatmap-focused variants"""
     heatmap = get_gradcam_heatmap(img_array, model, top_class_idx, None)
 
-    # 1. Pure heatmap (colored, no original image underneath)
-    pure_heatmap_img = heatmap_to_colored_image(heatmap, image, alpha=1.0)
+    # ── Main improved overlay ───────────────────────────────────────
+    heatmap_overlay_img = heatmap_to_colored_image(
+        heatmap, 
+        image, 
+        alpha=0.45, 
+        colormap=cv2.COLORMAP_JET   # ← you can also try PLASMA, INFERNO, MAGMA, TURBO
+    )
 
-    # 2. Heatmap overlay on original (blended)
-    heatmap_overlay_img = heatmap_to_colored_image(heatmap, image, alpha=0.45)
+    # ── Optional: high-contrast version (sometimes better for fish) ──
+    high_contrast_overlay = heatmap_to_colored_image(
+        heatmap, 
+        image, 
+        alpha=0.6, 
+        colormap=cv2.COLORMAP_TURBO   # often gives nicer separation
+    )
 
-    # 3. Outline only (edges without heatmap)
+    # ── Keep simple outline variant (only one) ───────────────────────
     orig_np = np.array(image)
     gray = cv2.cvtColor(orig_np, cv2.COLOR_RGB2GRAY)
-    edges = cv2.Canny(gray, 60, 180)
+    edges = cv2.Canny(gray, 80, 200)
     edges_rgb = cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB)
-    # Make edges green for visibility
-    edges_rgb[edges > 0] = [0, 220, 0]         # green edges
-    edges_rgb[edges == 0] = [0, 0, 0]          # background black
-    # Blend edges with original image
-    outlined = cv2.addWeighted(orig_np, 0.7, edges_rgb, 0.5, 0)
+    edges_rgb[edges > 0] = [80, 255, 120]          # softer green
+    outlined = cv2.addWeighted(orig_np, 0.75, edges_rgb, 0.45, 0)
     outlined_img = Image.fromarray(outlined)
 
-    # 4. Combined: heatmap + outline
-    heatmap_np = np.array(heatmap_overlay_img)
-    gray_heatmap = cv2.cvtColor(heatmap_np, cv2.COLOR_RGB2GRAY)
-    edges_combined = cv2.Canny(gray_heatmap, 60, 180)
-    edges_combined_rgb = cv2.cvtColor(edges_combined, cv2.COLOR_GRAY2RGB)
-    edges_combined_rgb[edges_combined > 0] = [0, 220, 0]
-    edges_combined_rgb[edges_combined == 0] = [0, 0, 0]
-    combined = cv2.addWeighted(heatmap_np, 0.9, edges_combined_rgb, 0.7, 0)
+    # ── Combined variant (heatmap + subtle outline) ──────────────────
+    combined_np = np.array(heatmap_overlay_img)
+    edges_combined = cv2.Canny(cv2.cvtColor(combined_np, cv2.COLOR_RGB2GRAY), 60, 180)
+    edges_rgb = cv2.cvtColor(edges_combined, cv2.COLOR_GRAY2RGB)
+    edges_rgb[edges_combined > 0] = [100, 255, 140]
+    combined = cv2.addWeighted(combined_np, 0.92, edges_rgb, 0.35, 0)
     combined_img = Image.fromarray(combined)
 
     def pil_to_base64(pil_img):
@@ -258,10 +271,11 @@ def generate_gradcam_variants(image: Image.Image, img_array, model, top_class_id
         return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
     return {
-        "original": pil_to_base64(image),           # raw uploaded image
-        "heatmap": pil_to_base64(pure_heatmap_img), # pure colored heatmap only
-        "outline": pil_to_base64(outlined_img),     # outline/edges only (no heatmap)
-        "combined": pil_to_base64(combined_img),    # heatmap + outline together
+        "original":          pil_to_base64(image),
+        "heatmap":           pil_to_base64(heatmap_overlay_img),     # ← main improved one
+        "heatmap_contrast":  pil_to_base64(high_contrast_overlay),   # optional extra
+        "outline":           pil_to_base64(outlined_img),
+        "combined":          pil_to_base64(combined_img),
     }
 
 # === ROUTES ===
