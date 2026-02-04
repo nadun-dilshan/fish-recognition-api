@@ -1,19 +1,19 @@
 # Core web framework
-Flask==2.3.3
-flask-cors==4.0.0
-Werkzeug==2.3.7
+Flask
+flask-cors
+Werkzeug
 
 # Environment variables
-python-dotenv==1.0.1
+python-dotenv
 
 # ML / Deep Learning
-tensorflow==2.13.1
-numpy==1.24.4
+tensorflow
+numpy
 
 # Image processing
-Pillow==10.2.0
-opencv-python==4.9.0.80
-matplotlib==3.8.2
+Pillow
+opencv-python
+matplotlib
 
 # Utilities
-requests==2.31.0
+requests
