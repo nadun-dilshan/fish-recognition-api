@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://example.org/fishontology.owl"
+         xmlns="http://example.org/fishontology.owl#">
+
+<owl:Ontology rdf:about="http://example.org/fishontology.owl"/>
+
+<owl:DatatypeProperty rdf:about="#phMin">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#phMax">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#phOptimalMin">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#phOptimalMax">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#tempMin">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#tempMax">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#tempOptimalMin">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#tempOptimalMax">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#doMin">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="#doOptimal">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  <rdfs:domain rdf:resource="#Species"/>
+  <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+</owl:DatatypeProperty>
+
+<owl:Class rdf:about="#Species">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:NamedIndividual rdf:about="#devario_malabaricus">
+  <rdf:type rdf:resource="#Species"/>
+  <phMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.5</phMin>
+  <phMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8.0</phMax>
+  <phOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.0</phOptimalMin>
+  <phOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.5</phOptimalMax>
+  <tempMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</tempMin>
+  <tempMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">28</tempMax>
+  <tempOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">22</tempOptimalMin>
+  <tempOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">26</tempOptimalMax>
+  <doMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5.5</doMin>
+  <doOptimal rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.5</doOptimal>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#devario_memorialis">
+  <rdf:type rdf:resource="#Species"/>
+  <phMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.8</phMin>
+  <phMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.6</phMax>
+  <phOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.0</phOptimalMin>
+  <phOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.3</phOptimalMax>
+  <tempMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">21</tempMin>
+  <tempMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">26</tempMax>
+  <tempOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">23</tempOptimalMin>
+  <tempOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</tempOptimalMax>
+  <doMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.5</doMin>
+  <doOptimal rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8.0</doOptimal>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#devario_micronema">
+  <rdf:type rdf:resource="#Species"/>
+  <phMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.2</phMin>
+  <phMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.4</phMax>
+  <phOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.7</phOptimalMin>
+  <phOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.2</phOptimalMax>
+  <tempMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">19</tempMin>
+  <tempMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</tempMax>
+  <tempOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">21</tempOptimalMin>
+  <tempOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">24</tempOptimalMax>
+  <doMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.0</doMin>
+  <doOptimal rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8.5</doOptimal>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#devario_monticola">
+  <rdf:type rdf:resource="#Species"/>
+  <phMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.4</phMin>
+  <phMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.8</phMax>
+  <phOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.9</phOptimalMin>
+  <phOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.4</phOptimalMax>
+  <tempMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">18</tempMin>
+  <tempMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">24</tempMax>
+  <tempOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</tempOptimalMin>
+  <tempOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">23</tempOptimalMax>
+  <doMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.0</doMin>
+  <doOptimal rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.8</doOptimal>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#devario_pathirana">
+  <rdf:type rdf:resource="#Species"/>
+  <phMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.7</phMin>
+  <phMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8.2</phMax>
+  <phOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.2</phOptimalMin>
+  <phOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.8</phOptimalMax>
+  <tempMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">22</tempMin>
+  <tempMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</tempMax>
+  <tempOptimalMin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</tempOptimalMin>
+  <tempOptimalMax rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">28</tempOptimalMax>
+  <doMin rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5.0</doMin>
+  <doOptimal rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.8</doOptimal>
+</owl:NamedIndividual>
+
+
+</rdf:RDF>
