@@ -17,3 +17,5 @@ matplotlib
 
 # Utilities
 requests
+
+owlready2
