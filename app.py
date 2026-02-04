@@ -7,6 +7,9 @@ import io
 import base64
 import os
 import json
+import cv2
+from tensorflow.keras import backend as K
+import matplotlib.cm as cm
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 import requests
@@ -147,6 +150,134 @@ def calculate_survival_probability(species, measurements):
         'status': 'good' if score > 80 else 'warning' if score > 50 else 'critical'
     }
 
+def get_last_conv_layer_name(model):
+    """Find the last conv layer dynamically (works for most CNNs)"""
+    for layer in reversed(model.layers):
+        if isinstance(layer, (tf.keras.layers.Conv2D, tf.keras.layers.DepthwiseConv2D)):
+            return layer.name
+    raise ValueError("Could not find a Conv2D layer in the model")
+
+
+LAST_CONV_LAYER_NAME = None  # will be set on first use
+
+def get_gradcam_heatmap(img_array, model, class_idx, last_conv_layer_name):
+    """Generate raw Grad-CAM heatmap (0–1)"""
+    global LAST_CONV_LAYER_NAME
+    if LAST_CONV_LAYER_NAME is None:
+        LAST_CONV_LAYER_NAME = last_conv_layer_name or get_last_conv_layer_name(model)
+
+    grad_model = tf.keras.models.Model(
+        [model.inputs],
+        [model.get_layer(LAST_CONV_LAYER_NAME).output, model.output]
+    )
+
+    with tf.GradientTape() as tape:
+        conv_outputs, predictions = grad_model(img_array)
+        loss = predictions[:, class_idx]
+
+    grads = tape.gradient(loss, conv_outputs)[0]
+
+    # Global average pooling of gradients → importance weights
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1))
+
+    # Weight the conv outputs
+    conv_outputs = conv_outputs[0]
+    heatmap = tf.reduce_sum(tf.expand_dims(pooled_grads, axis=0) * conv_outputs, axis=-1)
+
+    # ReLU + normalize
+    heatmap = tf.nn.relu(heatmap)
+    if tf.reduce_max(heatmap) > 0:
+        heatmap /= tf.reduce_max(heatmap)
+
+    return heatmap.numpy()
+
+
+def heatmap_to_colored_image(heatmap, original_img, alpha=0.55, colormap=cv2.COLORMAP_TURBO):
+    orig_np = np.array(original_img)
+    h, w = orig_np.shape[:2]
+
+    heatmap_resized = cv2.resize(heatmap, (w, h), cv2.INTER_CUBIC)
+    heatmap_norm = np.clip(heatmap_resized / np.max(heatmap_resized + 1e-8), 0, 1)
+
+    # ── Stronger foreground mask ───────────────────────────────────────
+    lab = cv2.cvtColor(orig_np, cv2.COLOR_RGB2LAB)
+    a_channel = lab[:,:,1].astype(np.float32)   # red-green
+    b_channel = lab[:,:,2].astype(np.float32)   # yellow-blue
+
+    # Many tropical fish have strong a/b channel contrast
+    color_contrast = np.sqrt(a_channel**2 + b_channel**2)
+    color_contrast = cv2.GaussianBlur(color_contrast, (0,0), 4)
+    color_contrast = (color_contrast - color_contrast.min()) / (color_contrast.max() - color_contrast.min() + 1e-6)
+
+    luminosity = lab[:,:,0].astype(np.float32) / 255.0
+    mask = 0.65 * color_contrast + 0.35 * luminosity
+    mask = cv2.GaussianBlur(mask, (21, 21), 0)
+    mask = np.clip(mask * 1.6, 0, 1)           # aggressive boost
+
+    # Final sharpening of transition
+    mask = np.power(mask, 1.35)
+
+    # ── Compose ─────────────────────────────────────────────────────────
+    colored = (255 * heatmap_norm[..., np.newaxis] * mask[..., np.newaxis]).astype(np.uint8)
+    colored_mapped = cv2.applyColorMap(colored, colormap)
+    colored_mapped = cv2.cvtColor(colored_mapped, cv2.COLOR_BGR2RGB)
+
+    # Where mask is low → original image, where high → colored heatmap
+    output = orig_np * (1 - mask[..., np.newaxis]) + colored_mapped * mask[..., np.newaxis]
+    output = np.clip(output, 0, 255).astype(np.uint8)
+
+    return Image.fromarray(output)
+
+def generate_gradcam_variants(image: Image.Image, img_array, model, top_class_idx):
+    """Return original + improved heatmap-focused variants"""
+    heatmap = get_gradcam_heatmap(img_array, model, top_class_idx, None)
+
+    # ── Main improved overlay ───────────────────────────────────────
+    heatmap_overlay_img = heatmap_to_colored_image(
+        heatmap, 
+        image, 
+        alpha=0.45, 
+        colormap=cv2.COLORMAP_JET   # ← you can also try PLASMA, INFERNO, MAGMA, TURBO
+    )
+
+    # ── Optional: high-contrast version (sometimes better for fish) ──
+    high_contrast_overlay = heatmap_to_colored_image(
+        heatmap, 
+        image, 
+        alpha=0.6, 
+        colormap=cv2.COLORMAP_TURBO   # often gives nicer separation
+    )
+
+    # ── Keep simple outline variant (only one) ───────────────────────
+    orig_np = np.array(image)
+    gray = cv2.cvtColor(orig_np, cv2.COLOR_RGB2GRAY)
+    edges = cv2.Canny(gray, 80, 200)
+    edges_rgb = cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB)
+    edges_rgb[edges > 0] = [80, 255, 120]          # softer green
+    outlined = cv2.addWeighted(orig_np, 0.75, edges_rgb, 0.45, 0)
+    outlined_img = Image.fromarray(outlined)
+
+    # ── Combined variant (heatmap + subtle outline) ──────────────────
+    combined_np = np.array(heatmap_overlay_img)
+    edges_combined = cv2.Canny(cv2.cvtColor(combined_np, cv2.COLOR_RGB2GRAY), 60, 180)
+    edges_rgb = cv2.cvtColor(edges_combined, cv2.COLOR_GRAY2RGB)
+    edges_rgb[edges_combined > 0] = [100, 255, 140]
+    combined = cv2.addWeighted(combined_np, 0.92, edges_rgb, 0.35, 0)
+    combined_img = Image.fromarray(combined)
+
+    def pil_to_base64(pil_img):
+        buffered = io.BytesIO()
+        pil_img.save(buffered, format="PNG")
+        return base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+    return {
+        "original":          pil_to_base64(image),
+        "heatmap":           pil_to_base64(heatmap_overlay_img),     # ← main improved one
+        "heatmap_contrast":  pil_to_base64(high_contrast_overlay),   # optional extra
+        "outline":           pil_to_base64(outlined_img),
+        "combined":          pil_to_base64(combined_img),
+    }
+
 # === ROUTES ===
 
 @app.route('/', methods=['GET'])
@@ -210,8 +341,11 @@ def get_locations():
     })
 
 # Prediction Endpoints (Your original code enhanced)
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET', 'POST'])  # allow GET just in case someone tests
 def predict_file():
+    if request.method == 'GET':
+        return jsonify({"message": "Use POST to send image"}), 405
+
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
     
@@ -221,8 +355,32 @@ def predict_file():
     
     try:
         image = Image.open(file.stream)
-        result = predict_fish(image)
-        return jsonify(result)
+        img_array = preprocess_image(image)   # already have this function
+        
+        pred_result = predict_fish(image)      # your original function
+        
+        response = pred_result  # start with original dict
+        
+        # ── Grad-CAM support ────────────────────────────────
+        if request.args.get('gradcam', 'false').lower() in ('true', '1', 'yes'):
+            if model is None:
+                response['gradcam_error'] = 'Model not loaded'
+            elif pred_result.get('status') != 'success':
+                response['gradcam_error'] = 'No confident prediction → no Grad-CAM'
+            else:
+                top_species = pred_result['predicted_species']
+                top_idx = CLASS_NAMES.index(top_species)
+                
+                try:
+                    variants = generate_gradcam_variants(image, img_array, model, top_idx)
+                    response['gradcam'] = variants
+                    response['gradcam_layer'] = LAST_CONV_LAYER_NAME  # optional
+                    response['gradcam_class'] = top_species           # optional, helpful for UI
+                except Exception as e:
+                    response['gradcam_error'] = f"Grad-CAM failed: {str(e)}"
+        
+        return jsonify(response)
+    
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
