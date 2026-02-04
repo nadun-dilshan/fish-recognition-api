@@ -1,8 +1,19 @@
-Flask==3.0.3
-Flask-CORS==5.0.0
-tensorflow==2.17.0
-numpy==1.26.4
-Pillow==10.4.0
-requests==2.32.3
-python-dotenv==1.0.1
-pytest==8.3.2
+# Core web framework
+Flask
+flask-cors
+Werkzeug
+
+# Environment variables
+python-dotenv
+
+# ML / Deep Learning
+tensorflow
+numpy
+
+# Image processing
+Pillow
+opencv-python
+matplotlib
+
+# Utilities
+requests
