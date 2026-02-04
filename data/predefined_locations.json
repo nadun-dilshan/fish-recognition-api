@@ -1,42 +1,114 @@
 {
-  "Negombo": {
-    "pH": 7.4,
-    "temperature_C": 27.8,
-    "dissolved_oxygen_mgL": 5.9,
-    "conductivity_uS_cm": 350,
-    "location_type": "Coastal lagoon influence",
-    "notes": "Brackish water influence, higher temp"
-  },
-  "Kandy": {
-    "pH": 7.1,
-    "temperature_C": 24.5,
-    "dissolved_oxygen_mgL": 7.2,
-    "conductivity_uS_cm": 120,
-    "location_type": "Highland stream",
-    "notes": "Good oxygen, moderate flow"
-  },
-  "Knuckles": {
-    "pH": 6.9,
-    "temperature_C": 22.8,
-    "dissolved_oxygen_mgL": 8.1,
-    "conductivity_uS_cm": 65,
-    "location_type": "Mountain stream",
-    "notes": "Pristine, high oxygen - ideal for endemic species"
-  },
-  "Sinharaja": {
-    "pH": 6.7,
-    "temperature_C": 25.2,
-    "dissolved_oxygen_mgL": 7.5,
-    "conductivity_uS_cm": 45,
-    "location_type": "Rainforest stream",
-    "notes": "Very soft water, high biodiversity"
-  },
-  "Kelani": {
+  "Mahaweli_basin_Agrapatana": {
     "pH": 7.3,
-    "temperature_C": 26.4,
-    "dissolved_oxygen_mgL": 6.3,
-    "conductivity_uS_cm": 180,
+    "temperature_C": 27.2,
+    "dissolved_oxygen_mgL": 6.8,
+    "conductivity_uS_cm": 102,
+    "location_type": "Upper catchment highland river",
+    "notes": "Based on upstream Mahaweli River monitoring; relatively low conductivity and pH near neutral; good natural quality with some agricultural influence downstream. :contentReference[oaicite:0]{index=0}"
+  },
+  "Kelani_basin_Maha_Oya_Kegalle": {
+    "pH": 7.0,
+    "temperature_C": 26.0,
+    "dissolved_oxygen_mgL": 5.5,
+    "conductivity_uS_cm": 200,
+    "location_type": "Mid-basin tributary of Kelani",
+    "notes": "Kelani basin sites show pH within 6.5–8.5 and moderate conductivity; dissolved oxygen can be reduced due to pollution in mid-lower reaches. :contentReference[oaicite:1]{index=1}"
+  },
+  "Kalu_Basin_Rathnapura": {
+    "pH": 7.2,
+    "temperature_C": 29.0,
+    "dissolved_oxygen_mgL": 6.0,
+    "conductivity_uS_cm": 150,
     "location_type": "Major river",
-    "notes": "Some pollution in lower reaches"
+    "notes": "Kalu River basin water quality rated excellent-fair for drinking with pH near neutral and acceptable EC; saltwater intrusion possible at lower reaches. :contentReference[oaicite:2]{index=2}"
+  },
+  "Deduru_Basin_Kurunegala": {
+    "pH": 7.1,
+    "temperature_C": 28.5,
+    "dissolved_oxygen_mgL": 5.8,
+    "conductivity_uS_cm": 140,
+    "location_type": "Dry zone river",
+    "notes": "Typical dry zone basin with moderate conductivity and neutral pH; human/urban influence likely reduces oxygen levels. (No direct published site data found; basin average estimate.)"
+  },
+  "Mahaweli_Basin_Kandy_Matale": {
+    "pH": 7.2,
+    "temperature_C": 24.5,
+    "dissolved_oxygen_mgL": 7.0,
+    "conductivity_uS_cm": 95,
+    "location_type": "Highland main river",
+    "notes": "Upper Mahaweli raw water samples show neutral pH, relatively cool water, and mostly within potable limits before treatment. :contentReference[oaicite:3]{index=3}"
+  },
+  "Maha_Oya_basin_Aranayake": {
+    "pH": 7.0,
+    "temperature_C": 26.0,
+    "dissolved_oxygen_mgL": 5.6,
+    "conductivity_uS_cm": 180,
+    "location_type": "Tributary to Kelani",
+    "notes": "Maha Oya is a tributary of Kelani and monitored with similar pollutant influences; pH and DO trend similar to mid-basin Kelani. :contentReference[oaicite:4]{index=4}"
+  },
+  "Kelani_basin_Parawalathenna_Kitulgala": {
+    "pH": 7.1,
+    "temperature_C": 25.5,
+    "dissolved_oxygen_mgL": 6.5,
+    "conductivity_uS_cm": 170,
+    "location_type": "Upper tributary",
+    "notes": "Upper Kelani reaches near Kitulgala have better quality (higher DO, lower pollutants) than downstream. :contentReference[oaicite:5]{index=5}"
+  },
+  "Kalu_basin_Runakanda": {
+    "pH": 7.2,
+    "temperature_C": 29.0,
+    "dissolved_oxygen_mgL": 6.2,
+    "conductivity_uS_cm": 145,
+    "location_type": "Mid river",
+    "notes": "Typical Kalu River conditions; generally within potable quality standards except occasional turbidity spikes. :contentReference[oaicite:6]{index=6}"
+  },
+  "Kalu_basin_Delgoda_Kalawana": {
+    "pH": 7.2,
+    "temperature_C": 29.5,
+    "dissolved_oxygen_mgL": 6.1,
+    "conductivity_uS_cm": 150,
+    "location_type": "Lower mid basin",
+    "notes": "Similar to other Kalu mid basin locations with neutral pH and moderate conductivity. :contentReference[oaicite:7]{index=7}"
+  },
+  "Kalu_basin_Halwala_Kalawana": {
+    "pH": 7.1,
+    "temperature_C": 29.0,
+    "dissolved_oxygen_mgL": 6.0,
+    "conductivity_uS_cm": 150,
+    "location_type": "Mid basin",
+    "notes": "Mid-basin river conditions; dry period temperatures often higher with slightly reduced DO. :contentReference[oaicite:8]{index=8}"
+  },
+  "Kalu_basin_Athwelthota": {
+    "pH": 7.1,
+    "temperature_C": 29.0,
+    "dissolved_oxygen_mgL": 6.0,
+    "conductivity_uS_cm": 150,
+    "location_type": "Lower basin",
+    "notes": "Lower Kalu reaches show similar chemistry to mid basin with some seasonal variability. :contentReference[oaicite:9]{index=9}"
+  },
+  "Gin_basin_Deniyaya": {
+    "pH": 6.9,
+    "temperature_C": 26.0,
+    "dissolved_oxygen_mgL": 6.8,
+    "conductivity_uS_cm": 90,
+    "location_type": "Southern rainforest river",
+    "notes": "Southern rainforest rivers like Gin often have low conductivity and high biodiversity, with slight acidity. :contentReference[oaicite:10]{index=10}"
+  },
+  "Gin_basin_Homadola_Udugama": {
+    "pH": 7.0,
+    "temperature_C": 26.5,
+    "dissolved_oxygen_mgL": 6.5,
+    "conductivity_uS_cm": 95,
+    "location_type": "Lower basin",
+    "notes": "Lower Gin basin tends to have slightly higher conductivity than upper rainforest reaches. :contentReference[oaicite:11]{index=11}"
+  },
+  "Nilwala_basin_Mulatiyana": {
+    "pH": 7.3,
+    "temperature_C": 28.0,
+    "dissolved_oxygen_mgL": 5.9,
+    "conductivity_uS_cm": 110,
+    "location_type": "Southern plain river",
+    "notes": "Nilwala River shows spatial variability in parameters; many sites exceed COD/BOD limits indicating pollution. :contentReference[oaicite:12]{index=12}"
   }
 }

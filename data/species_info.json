@@ -10,7 +10,7 @@
     "diet": "Insects, crustaceans, algae, detritus",
     "behavior": "Schooling fish, peaceful, active swimmers",
     "threats": ["Habitat degradation", "Pollution", "Invasive species"],
-    "general_info": "Popular in aquariums. Prefers well-oxygenated water with strong current simulation."
+    "general_info": "Devario malabaricus, commonly known as the Malabar Danio, is a small cyprinid fish reaching up to 8 cm in length. It inhabits clear, fast-flowing hill streams with rocky substrates across the Western Ghats of India and wet zone streams of Sri Lanka. The species is listed as Least Concern on the IUCN Red List. It feeds on insects, small crustaceans, algae, and detritus, and displays peaceful, schooling behavior with high activity levels. Although popular in the aquarium trade, it is threatened in the wild by habitat degradation, pollution, and invasive species, and prefers well-oxygenated water with strong current conditions."
   },
   "devario_memorialis": {
     "common_name": "Memorial Danio",
@@ -23,7 +23,7 @@
     "diet": "Small invertebrates, zooplankton",
     "behavior": "Shoaling, mid-water swimmer",
     "threats": ["Deforestation", "Water abstraction", "Gem mining pollution"],
-    "general_info": "Endemic to Sri Lanka. Very sensitive to water quality changes."
+    "general_info": "Devario memorialis, or the Memorial Danio, is an endemic Sri Lankan cyprinid species growing up to 7.5 cm in length. It is restricted to shallow, clear streams with gravel beds in the Knuckles Mountain Range. The species is classified as Vulnerable by the IUCN due to its limited distribution and sensitivity to environmental changes. It feeds primarily on small invertebrates and zooplankton and exhibits shoaling behavior as a mid-water swimmer. Major threats include deforestation, excessive water abstraction, and pollution from gem mining activities, making it highly sensitive to water quality degradation."
   },
   "devario_micronema": {
     "common_name": "Micronema Danio",
@@ -36,7 +36,7 @@
     "diet": "Aquatic insects, larvae",
     "behavior": "Active schooling, prefers current",
     "threats": ["Agriculture runoff", "Sedimentation"],
-    "general_info": "Rare species requiring pristine water conditions."
+    "general_info": "Devario micronema, known as the Micronema Danio, is a rare and small cyprinid species reaching about 6 cm in length. It inhabits fast-flowing riffles in forested streams of Sri Lanka’s central highlands. The species is listed as Endangered on the IUCN Red List due to its narrow habitat requirements and declining water quality. It feeds mainly on aquatic insects and larvae and is an active schooling fish that strongly prefers flowing water. Agricultural runoff and increased sedimentation pose serious threats, and the species requires pristine, well-oxygenated stream environments to survive."
   },
   "devario_monticola": {
     "common_name": "Mountain Danio",
@@ -49,7 +49,7 @@
     "diet": "Insects, small fish",
     "behavior": "Territorial in breeding season",
     "threats": ["Climate change", "Tourism impact"],
-    "general_info": "Largest Devario in Sri Lanka. Hardy but needs cool water."
+    "general_info": "Devario monticola, commonly referred to as the Mountain Danio, is the largest Devario species in Sri Lanka, reaching up to 9 cm in length. It inhabits cool, highland streams and rocky pools at higher elevations. Classified as Near Threatened, the species feeds on insects and occasionally small fish. While generally hardy, it can exhibit territorial behavior during the breeding season. Climate change and increasing tourism-related disturbances threaten its habitat, and the species requires clean, cool, well-oxygenated water conditions to thrive."
   },
   "devario_pathirana": {
     "common_name": "Pathirana's Danio",
@@ -62,6 +62,6 @@
     "diet": "Omnivorous - algae, insects, plant matter",
     "behavior": "Peaceful shoaling fish",
     "threats": ["Urbanization", "Eutrophication"],
-    "general_info": "Recently discovered species. Tolerates slightly warmer water."
+    "general_info": "Devario pathirana, or Pathirana’s Danio, is a recently described cyprinid species endemic to the wet zone lowlands of Sri Lanka, reaching approximately 7 cm in length. It inhabits lowland streams with dense aquatic vegetation and exhibits peaceful shoaling behavior. The species is currently listed as Data Deficient due to limited ecological information. It has an omnivorous diet consisting of algae, insects, and plant matter and is relatively tolerant of slightly warmer water compared to other Devario species. However, increasing urbanization and eutrophication of waterways pose emerging threats to its habitat."
   }
 }
